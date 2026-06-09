@@ -1,0 +1,137 @@
+[
+  {
+    "question": "What does 'Bonjour' mean?",
+    "options": ["Good night", "Good morning", "Goodbye", "Please"],
+    "answer": "Good morning"
+  },
+  {
+    "question": "What does 'Au revoir' mean?",
+    "options": ["Hello", "Goodbye", "Please", "Thanks"],
+    "answer": "Goodbye"
+  },
+  {
+    "question": "What is 'Thank you' in French?",
+    "options": ["Merci", "Bonjour", "Salut", "Pardon"],
+    "answer": "Merci"
+  },
+  {
+    "question": "What does 'Bonne nuit' mean?",
+    "options": ["Good night", "Good afternoon", "Good day", "See you"],
+    "answer": "Good night"
+  },
+  {
+    "question": "What is the French word for 'book'?",
+    "options": ["livre", "stylo", "chaise", "table"],
+    "answer": "livre"
+  },
+  {
+    "question": "What is the French word for 'school'?",
+    "options": ["école", "maison", "ville", "porte"],
+    "answer": "école"
+  },
+  {
+    "question": "What color is 'rouge'?",
+    "options": ["Blue", "Green", "Red", "White"],
+    "answer": "Red"
+  },
+  {
+    "question": "What color is 'bleu'?",
+    "options": ["Blue", "Black", "White", "Yellow"],
+    "answer": "Blue"
+  },
+  {
+    "question": "How do you say 'Please' in French?",
+    "options": ["S'il vous plaît", "Merci", "Pardon", "Bonjour"],
+    "answer": "S'il vous plaît"
+  },
+  {
+    "question": "What does 'Pardon' mean?",
+    "options": ["Excuse me", "Goodbye", "Welcome", "Morning"],
+    "answer": "Excuse me"
+  },
+  {
+    "question": "What is 'water' in French?",
+    "options": ["lait", "eau", "jus", "café"],
+    "answer": "eau"
+  },
+  {
+    "question": "What is 'milk' in French?",
+    "options": ["eau", "pain", "lait", "beurre"],
+    "answer": "lait"
+  },
+  {
+    "question": "What is 'bread' in French?",
+    "options": ["pain", "riz", "viande", "sel"],
+    "answer": "pain"
+  },
+  {
+    "question": "What is 'cat' in French?",
+    "options": ["chien", "chat", "oiseau", "poisson"],
+    "answer": "chat"
+  },
+  {
+    "question": "What is 'dog' in French?",
+    "options": ["chat", "chien", "lapin", "vache"],
+    "answer": "chien"
+  },
+  {
+    "question": "How do you say 'Good afternoon' in French?",
+    "options": ["Bonsoir", "Bon après-midi", "Bonjour", "Salut"],
+    "answer": "Bon après-midi"
+  },
+  {
+    "question": "What does 'Salut' mean?",
+    "options": ["Hello", "Teacher", "Food", "Street"],
+    "answer": "Hello"
+  },
+  {
+    "question": "What is the French word for 'table'?",
+    "options": ["porte", "fenêtre", "table", "livre"],
+    "answer": "table"
+  },
+  {
+    "question": "What is the French word for 'chair'?",
+    "options": ["chaise", "table", "porte", "mur"],
+    "answer": "chaise"
+  },
+  {
+    "question": "What is the French word for 'window'?",
+    "options": ["porte", "fenêtre", "mur", "plafond"],
+    "answer": "fenêtre"
+  },
+  {
+    "question": "How do you say 'See you soon' in French?",
+    "options": ["À bientôt", "Bonjour", "Merci", "Bonsoir"],
+    "answer": "À bientôt"
+  },
+  {
+    "question": "What is the French word for 'teacher'?",
+    "options": ["étudiant", "professeur", "médecin", "acteur"],
+    "answer": "professeur"
+  },
+  {
+    "question": "What is the French word for 'student'?",
+    "options": ["étudiant", "professeur", "acteur", "serveur"],
+    "answer": "étudiant"
+  },
+  {
+    "question": "How do you say 'Where do you live?' in French?",
+    "options": [
+      "Où habites-tu ?",
+      "Comment t'appelles-tu ?",
+      "Quel âge as-tu ?",
+      "Qui est-ce ?"
+    ],
+    "answer": "Où habites-tu ?"
+  },
+  {
+    "question": "How do you say 'How old are you?' in French?",
+    "options": [
+      "Quel âge as-tu ?",
+      "Comment ça va ?",
+      "Où habites-tu ?",
+      "Qui est-ce ?"
+    ],
+    "answer": "Quel âge as-tu ?"
+  }
+]
