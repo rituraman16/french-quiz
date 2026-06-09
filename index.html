@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>French Master Quiz</title>
+
+<style>
+:root{
+    --primary:#2563eb;
+    --success:#16a34a;
+    --danger:#dc2626;
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --text:#1e293b;
+}
+
+.dark{
+    --bg:#0f172a;
+    --card:#1e293b;
+    --text:#f8fafc;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    transition:.3s;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+}
+
+.card{
+    background:var(--card);
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    margin-top:20px;
+}
+
+h1,h2,h3{
+    margin-bottom:15px;
+}
+
+button{
+    border:none;
+    cursor:pointer;
+    padding:12px 20px;
+    border-radius:10px;
+    font-size:16px;
+    transition:.2s;
+}
+
+.primary{
+    background:var(--primary);
+    color:white;
+}
+
+.success{
+    background:var(--success);
+    color:white;
+}
+
+.danger{
+    background:var(--danger);
+    color:white;
+}
+
+.secondary{
+    background:#64748b;
+    color:white;
+}
+
+button:hover{
+    transform:translateY(-2px);
+}
+
+.option{
+    display:block;
+    padding:15px;
+    margin:10px 0;
+    border:2px solid #d1d5db;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.option.selected{
+    border-color:var(--primary);
+    background:#dbeafe;
+}
+
+.dark .option.selected{
+    color:#000;
+}
+
+.progress-container{
+    width:100%;
+    background:#ddd;
+    height:12px;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:var(--success);
+    transition:.3s;
+}
+
+.nav-buttons{
+    display:flex;
+    justify-content:space-between;
+    margin-top:20px;
+}
+
+.hidden{
+    display:none;
+}
+
+.palette{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(45px,1fr));
+    gap:10px;
+    margin-top:20px;
+}
+
+.palette-btn{
+    height:45px;
+    border:none;
+    border-radius:8px;
+    background:#cbd5e1;
+}
+
+.palette-btn.answered{
+    background:var(--success);
+    color:white;
+}
+
+.palette-btn.current{
+    border:3px solid var(--primary);
+}
+
+.result-box{
+    text-align:center;
+}
+
+.correct{
+    color:var(--success);
+    font-weight:bold;
+}
+
+.incorrect{
+    color:var(--danger);
+    font-weight:bold;
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+}
+
+.review-item{
+    margin-bottom:20px;
+    padding:15px;
+    border-radius:10px;
+    border:1px solid #ddd;
+}
+
+.timer{
+    font-size:18px;
+    font-weight:bold;
+}
+
+@media(max-width:768px){
+    .nav-buttons{
+        flex-direction:column;
+        gap:10px;
+    }
+
+    button{
+        width:100%;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- START SCREEN -->
+
+<div id="startScreen" class="card">
+    <div class="topbar">
+        <h1>🇫🇷 French Master Quiz</h1>
+        <button onclick="toggleDarkMode()">🌙 Dark Mode</button>
+    </div>
+
+<p><strong>Total Questions per Attempt:</strong> 20</p>
+<p><strong>Question Source:</strong></p>
+<ul>
+    <li>Assignments 1–6</li>
+    <li>Bonus French Questions</li>
+    <li>Online Questions (if internet available)</li>
+</ul>
+
+<br>
+
+<p>Rules:</p>
+<ul>
+    <li>At least 2 questions from each assignment.</li>
+    <li>Remaining questions selected randomly.</li>
+    <li>Options shuffled every attempt.</li>
+    <li>Best score saved locally.</li>
+</ul>
+
+<br>
+
+<button class="primary" onclick="startQuiz()">
+    Start Quiz
+</button>
+
+</div>
+
+<!-- QUIZ SCREEN -->
+
+<div id="quizScreen" class="card hidden">
+
+<div class="topbar">
+    <div>
+        <h2 id="counter">Question 1 / 20</h2>
+    </div>
+
+    <div class="timer" id="timer">
+        20:00
+    </div>
+</div>
+
+<br>
+
+<div class="progress-container">
+    <div class="progress" id="progressBar"></div>
+</div>
+
+<br>
+
+<h3 id="questionText"></h3>
+
+<div id="optionsContainer"></div>
+
+<div class="nav-buttons">
+    <button class="secondary" onclick="prevQuestion()">
+        Previous
+    </button>
+
+    <button class="primary" onclick="nextQuestion()">
+        Next
+    </button>
+</div>
+
+<br>
+
+<button class="success" onclick="submitQuiz()">
+    Submit Quiz
+</button>
+
+<div class="palette" id="questionPalette"></div>
+
+</div>
+
+<!-- RESULT SCREEN -->
+
+<div id="resultScreen" class="card hidden">
+
+<div class="result-box">
+
+    <h1>Quiz Completed 🎉</h1>
+
+    <h2 id="scoreText"></h2>
+
+    <h3 id="percentageText"></h3>
+
+    <h3 id="gradeText"></h3>
+
+    <p id="correctWrongText"></p>
+
+    <p id="bestScoreText"></p>
+
+    <br>
+
+    <button class="primary" onclick="showReview()">
+        Review Answers
+    </button>
+
+    <button class="success" onclick="restartQuiz()">
+        Retake Quiz
+    </button>
+
+</div>
+
+</div>
+
+<!-- REVIEW SCREEN -->
+
+<div id="reviewScreen" class="card hidden">
+
+<h2>Answer Review</h2>
+
+<div id="reviewContainer"></div>
+
+<button class="primary" onclick="restartQuiz()">
+    New Quiz
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+/************************************************
+ CONFIGURATION
+************************************************/
+
+const QUIZ_SIZE = 20;
+const MIN_FROM_EACH_ASSIGNMENT = 2;
+const QUIZ_TIME_MINUTES = 20;
+
+const ONLINE_QUESTION_URL =
+"https://raw.githubusercontent.com/rituraman16/french-quiz/main/questions.json";
+
+/************************************************
+ QUESTION BANK PLACEHOLDER
+ PART 2 WILL REPLACE THESE ARRAYS
+************************************************/
+
+const assignment1 = [
+
+{
+question:"The number after 'Cinq' is:",
+options:["Deux","Un","Six","Huit"],
+answer:"Six"
+},
+
+{
+question:"How do you wish your friend 'Good Evening'?",
+options:["Bonjour","Bon après-midi","Bonsoir","Au revoir"],
+answer:"Bonsoir"
+},
+
+{
+question:"How do you say 'the day' in French?",
+options:["Le jour","Le fils","La mère","La nuit"],
+answer:"Le jour"
+},
+
+{
+question:"When wishing goodbye, what does 'À mardi' mean?",
+options:[
+"See you later",
+"See you on Tuesday",
+"See you soon",
+"See you tomorrow"
+],
+answer:"See you on Tuesday"
+},
+
+{
+question:"How do you say 'Thank You sir'?",
+options:[
+"Au revoir Madame",
+"Merci Monsieur",
+"Très bien Monsieur",
+"Merci Madame"
+],
+answer:"Merci Monsieur"
+},
+
+{
+question:"Saturday in French is:",
+options:["Samedi","Lundi","Jeudi","Mercredi"],
+answer:"Samedi"
+},
+
+{
+question:"'Le Mois' means:",
+options:[
+"The year",
+"The day",
+"The week",
+"The month"
+],
+answer:"The month"
+},
+
+{
+question:"How do we say 'August' in French?",
+options:["Avril","Novembre","Mars","Août"],
+answer:"Août"
+},
+
+{
+question:"How would you reply to 'Comment allez-vous'?",
+options:[
+"À Bientôt",
+"Au revoir",
+"Je vais bien",
+"Merci"
+],
+answer:"Je vais bien"
+},
+
+{
+question:"What does 'chanter' mean?",
+options:[
+"To dance",
+"To learn",
+"To sing",
+"To act"
+],
+answer:"To sing"
+}
+
+];
+
+const assignment2 = [
+
+{
+question:"The meaning of 'une voiture' is:",
+options:[
+"A factory",
+"A clock",
+"A car",
+"A candy"
+],
+answer:"A car"
+},
+
+{
+question:"How do we say 'the year' in French?",
+options:[
+"Un mois",
+"Une journée",
+"L'année",
+"La maison"
+],
+answer:"L'année"
+},
+
+{
+question:"How do we say 'Twelve pens' in French?",
+options:[
+"Deux stylos",
+"Deux maisons",
+"Douze stylos",
+"Douze maisons"
+],
+answer:"Douze stylos"
+},
+
+{
+question:"The successive number of douze is:",
+options:[
+"Treize",
+"Sept",
+"Quinze",
+"Dix"
+],
+answer:"Treize"
+},
+
+{
+question:"The definite article for a feminine singular noun is:",
+options:[
+"La",
+"Une",
+"Des",
+"Les"
+],
+answer:"La"
+},
+
+{
+question:"What is the plural of 'une pomme'?",
+options:[
+"Les pommes",
+"Un pomme",
+"Une pomme",
+"Des pommes"
+],
+answer:"Des pommes"
+},
+
+{
+question:"The indefinite article for a masculine singular noun is:",
+options:[
+"Des",
+"Un",
+"Une",
+"Deux"
+],
+answer:"Un"
+},
+
+{
+question:"What is the meaning of 'un nuage'?",
+options:[
+"a cake",
+"a drawing",
+"a cloud",
+"a juice"
+],
+answer:"a cloud"
+},
+
+{
+question:"What is 'the moon' in French?",
+options:[
+"Le mouton",
+"La lune",
+"La pomme",
+"La souris"
+],
+answer:"La lune"
+},
+
+{
+question:"How do we say 'seven aeroplanes' in French?",
+options:[
+"Sept avions",
+"Seize avions",
+"Sept bonbons",
+"Seize bonbons"
+],
+answer:"Sept avions"
+}
+
+];
+
+const assignment3 = [
+
+{
+question:"How do we say the number 11 in French?",
+options:[
+"Douze",
+"Onze",
+"Quinze",
+"Treize"
+],
+answer:"Onze"
+},
+
+{
+question:"The class starts on the 15th of July. How do you say that date in French?",
+options:[
+"le quinze mars",
+"la quatorze juillet",
+"le quinze juillet",
+"la treize juin"
+],
+answer:"le quinze juillet"
+},
+
+{
+question:"'Twenty one' in French is:",
+options:[
+"Trente un",
+"Vingt un",
+"Trente et un",
+"Vingt et un"
+],
+answer:"Vingt et un"
+},
+
+{
+question:"How to say 'grandmother' in French?",
+options:[
+"le petit fils",
+"la petite fille",
+"le grand-père",
+"la grand-mère"
+],
+answer:"la grand-mère"
+},
+
+{
+question:"'C'est dimanche' means:",
+options:[
+"It's Thursday",
+"It's Tuesday",
+"It's Friday",
+"It's Sunday"
+],
+answer:"It's Sunday"
+},
+
+{
+question:"Pick the odd one out:",
+options:[
+"la mère",
+"le dessin",
+"la nièce",
+"le frère"
+],
+answer:"le dessin"
+},
+
+{
+question:"Which of the following colours is white?",
+options:[
+"bleu",
+"blanc",
+"vert",
+"rouge"
+],
+answer:"blanc"
+},
+
+{
+question:"What does 'le mari' mean?",
+options:[
+"the father",
+"the brother",
+"the uncle",
+"the husband"
+],
+answer:"the husband"
+},
+
+{
+question:"What does 'Je vais bien' mean?",
+options:[
+"I am fine",
+"Thank you",
+"Not bad",
+"See you tomorrow"
+],
+answer:"I am fine"
+},
+
+{
+question:"How do you say 'the sister' in French?",
+options:[
+"la sœur",
+"la mère",
+"la fille",
+"la femme"
+],
+answer:"la sœur"
+}
+
+];
+const assignment4 = [
+
+{
+question:"The French term for 'ready to wear' is:",
+options:["Déjà vu","A la carte","A la mode","Prêt à porter"],
+answer:"Prêt à porter"
+},
+
+{
+question:"How do we say 'England' in French?",
+options:["la Suisse","l'angleterre","la Russe","l'allemagne"],
+answer:"l'angleterre"
+},
+
+{
+question:"Translate 'I am happy': ______ content.",
+options:["Nous sommes","Vous êtes","Je suis","Tu es"],
+answer:"Je suis"
+},
+
+{
+question:"What is the meaning of 'la boulangerie'?",
+options:["The clock","The bakery","The cat","The star"],
+answer:"The bakery"
+},
+
+{
+question:"The singular of the pronoun 'nous' is:",
+options:["je","elle","tu","il"],
+answer:"je"
+},
+
+{
+question:"Marie and I are playing badminton. Which French pronoun can replace 'Marie and I'?",
+options:["vous","ils","elles","nous"],
+answer:"nous"
+},
+
+{
+question:"The formal way to ask someone's name:",
+options:[
+"Combien ça coûte?",
+"Comment vous appelez-vous?",
+"Comment ça va?",
+"Quel jour est-il?"
+],
+answer:"Comment vous appelez-vous?"
+},
+
+{
+question:"How do we say 'a student' in French?",
+options:[
+"un médecin",
+"un serveur",
+"un étudiant",
+"un cuisinier"
+],
+answer:"un étudiant"
+},
+
+{
+question:"How to say 'sorry' in French?",
+options:["Bravo","Désolé","Merci","Demain"],
+answer:"Désolé"
+},
+
+{
+question:"In French, if I want to say 'Hannah is German', I would say 'Hannah est ____':",
+options:["japonaise","française","allemande","espagnole"],
+answer:"allemande"
+}
+
+];
+
+const assignment5 = [
+
+{
+question:"If I point at a stroller and ask 'Qu'est-ce que c'est?' what would you answer?",
+options:[
+"C'est un pneu.",
+"C'est un tuyau.",
+"C'est une étoile.",
+"C'est un landau."
+],
+answer:"C'est un landau."
+},
+
+{
+question:"How do we say 'the ear' in French?",
+options:["l'oreille","la bouche","le nez","le front"],
+answer:"l'oreille"
+},
+
+{
+question:"'I am a singer' in French is:",
+options:[
+"Je suis cuisinier.",
+"Je suis chanteur.",
+"Je suis directeur.",
+"Je suis chauffeur."
+],
+answer:"Je suis chanteur."
+},
+
+{
+question:"If I reply 'J'ai vingt ans' what is the question?",
+options:[
+"Quel âge as-tu?",
+"Qui est-ce?",
+"Comment t'appelles-tu?",
+"Où est la table?"
+],
+answer:"Quel âge as-tu?"
+},
+
+{
+question:"How to say, 'They have a book'? ____ ____ un livre.",
+options:[
+"Nous avons",
+"Ils ont",
+"Elle a",
+"Il a"
+],
+answer:"Ils ont"
+},
+
+{
+question:"The plural of un gâteau is:",
+options:[
+"les gâteau",
+"des gâteaus",
+"les gâteaux",
+"des gâteaux"
+],
+answer:"des gâteaux"
+},
+
+{
+question:"Which word does not take an 'x' in the plural form?",
+options:[
+"un chou",
+"un clou",
+"un caillou",
+"un hibou"
+],
+answer:"un clou"
+},
+
+{
+question:"Fill in the blank: 'J'habite __ Inde, __ Goa.'",
+options:[
+"en, à",
+"à, en",
+"dans, à",
+"au, en"
+],
+answer:"en, à"
+},
+
+{
+question:"Someone is at your door. Before opening the door, what would you ask?",
+options:[
+"Quel jour est-il?",
+"Comment ça va?",
+"Qui est-ce?",
+"Quel âge as-tu?"
+],
+answer:"Qui est-ce?"
+},
+
+{
+question:"How do you say, 'I am in front of the house'? Je suis ____ la maison.",
+options:[
+"dans",
+"sous",
+"derrière",
+"devant"
+],
+answer:"devant"
+}
+
+];
+
+const assignment6 = [
+
+{
+question:"The verb 'to go' in French is:",
+options:["être","avoir","aller","habiter"],
+answer:"aller"
+},
+
+{
+question:"What is 'the road' in French?",
+options:["La plage","Le magasin","La rue","Le musée"],
+answer:"La rue"
+},
+
+{
+question:"Fill in the blank: Ils ____ au parc.",
+options:["va","vais","vas","vont"],
+answer:"vont"
+},
+
+{
+question:"Choose the correct demonstrative adjective: ___ avion.",
+options:["cet","cette","ce","ces"],
+answer:"cet"
+},
+
+{
+question:"Translate: il fait froid",
+options:[
+"It is hot",
+"It is cold",
+"It is windy",
+"It is raining"
+],
+answer:"It is cold"
+},
+
+{
+question:"How do you say 'why' in French?",
+options:["Pourquoi","Qui","Quand","Comment"],
+answer:"Pourquoi"
+},
+
+{
+question:"What is 'the grocery shop' in French?",
+options:[
+"la rue",
+"la boulangerie",
+"l'épicerie",
+"l'oreille"
+],
+answer:"l'épicerie"
+},
+
+{
+question:"Summer in French is:",
+options:[
+"l'hiver",
+"le printemps",
+"l'été",
+"l'automne"
+],
+answer:"l'été"
+},
+
+{
+question:"What is the meaning of 'Quel temps fait-il?'",
+options:[
+"How old are you?",
+"How is the weather?",
+"What is your name?",
+"Which day is it?"
+],
+answer:"How is the weather?"
+},
+
+{
+question:"Fill in the blank: Combien ____ le stylo?",
+options:[
+"appelles",
+"quand",
+"coûte",
+"fais"
+],
+answer:"coûte"
+}
+
+];
+
+const bonusQuestions = [];
+
+bonusQuestions.push(
+
+{
+question:"What does 'Bonjour' mean?",
+options:["Good night","Good morning","Goodbye","Please"],
+answer:"Good morning"
+},
+
+{
+question:"What does 'Au revoir' mean?",
+options:["Hello","Goodbye","Please","Thanks"],
+answer:"Goodbye"
+},
+
+{
+question:"What is 'Thank you' in French?",
+options:["Merci","Bonjour","Salut","Pardon"],
+answer:"Merci"
+},
+
+{
+question:"What does 'Bonne nuit' mean?",
+options:["Good night","Good afternoon","Good day","See you"],
+answer:"Good night"
+},
+
+{
+question:"What is the French word for 'book'?",
+options:["livre","stylo","chaise","table"],
+answer:"livre"
+},
+
+{
+question:"What is the French word for 'school'?",
+options:["école","maison","ville","porte"],
+answer:"école"
+},
+
+{
+question:"What color is 'rouge'?",
+options:["Blue","Green","Red","White"],
+answer:"Red"
+},
+
+{
+question:"What color is 'bleu'?",
+options:["Blue","Black","White","Yellow"],
+answer:"Blue"
+},
+
+{
+question:"How do you say 'Please' in French?",
+options:[
+"S'il vous plaît",
+"Merci",
+"Pardon",
+"Bonjour"
+],
+answer:"S'il vous plaît"
+},
+
+{
+question:"What does 'Pardon' mean?",
+options:["Excuse me","Goodbye","Welcome","Morning"],
+answer:"Excuse me"
+},
+
+{
+question:"What is 'water' in French?",
+options:["lait","eau","jus","café"],
+answer:"eau"
+},
+
+{
+question:"What is 'milk' in French?",
+options:["eau","pain","lait","beurre"],
+answer:"lait"
+},
+
+{
+question:"What is 'bread' in French?",
+options:["pain","riz","viande","sel"],
+answer:"pain"
+},
+
+{
+question:"What is 'cat' in French?",
+options:["chien","chat","oiseau","poisson"],
+answer:"chat"
+},
+
+{
+question:"What is 'dog' in French?",
+options:["chat","chien","lapin","vache"],
+answer:"chien"
+}
+
+);
+
+/************************************************
+ GLOBALS
+************************************************/
+
+let quizQuestions=[];
+let currentQuestion=0;
+let userAnswers=[];
+let timerInterval;
+let timeRemaining=QUIZ_TIME_MINUTES*60;
+
+/************************************************
+ INTERNET ENHANCEMENT
+************************************************/
+
+async function loadOnlineQuestions(){
+
+try{
+
+const response=await fetch(ONLINE_QUESTION_URL);
+
+if(response.ok){
+
+const data=await response.json();
+
+if(Array.isArray(data)){
+bonusQuestions.push(...data);
+}
+
+}
+
+}catch(e){
+
+console.log("Offline mode.");
+
+}
+
+}
+
+/************************************************
+ HELPERS
+************************************************/
+
+function shuffle(array){
+
+for(let i=array.length-1;i>0;i--){
+
+const j=Math.floor(Math.random()*(i+1));
+
+[array[i],array[j]]=[array[j],array[i]];
+
+}
+
+return array;
+
+}
+
+function randomPick(arr,n){
+
+return shuffle([...arr]).slice(0,n);
+
+}
+
+/************************************************
+ QUIZ GENERATION
+************************************************/
+
+function generateQuiz(){
+
+let selected=[];
+
+const assignments=[
+assignment1,
+assignment2,
+assignment3,
+assignment4,
+assignment5,
+assignment6
+];
+
+assignments.forEach(a=>{
+selected.push(...randomPick(a,MIN_FROM_EACH_ASSIGNMENT));
+});
+
+let remainingPool=[];
+
+assignments.forEach(a=>{
+
+remainingPool.push(
+...a.filter(q=>!selected.includes(q))
+);
+
+});
+
+remainingPool.push(...bonusQuestions);
+
+const extraNeeded=
+QUIZ_SIZE-selected.length;
+
+selected.push(
+...randomPick(
+remainingPool,
+extraNeeded
+)
+);
+
+selected=shuffle(selected);
+
+selected.forEach(q=>{
+q.options=shuffle([...q.options]);
+});
+
+return selected;
+
+}
+
+/************************************************
+ START QUIZ
+************************************************/
+
+async function startQuiz(){
+
+await loadOnlineQuestions();
+
+quizQuestions=generateQuiz();
+
+userAnswers=
+new Array(quizQuestions.length).fill(null);
+
+document.getElementById("startScreen")
+.classList.add("hidden");
+
+document.getElementById("quizScreen")
+.classList.remove("hidden");
+
+buildPalette();
+
+startTimer();
+
+renderQuestion();
+
+}
+
+/************************************************
+ TIMER
+************************************************/
+
+function startTimer(){
+
+timerInterval=setInterval(()=>{
+
+timeRemaining--;
+
+const mins=
+Math.floor(timeRemaining/60);
+
+const secs=
+timeRemaining%60;
+
+document.getElementById("timer")
+.innerText=
+`${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+
+if(timeRemaining<=0){
+
+clearInterval(timerInterval);
+
+submitQuiz();
+
+}
+
+},1000);
+
+}
+
+/************************************************
+ QUESTION RENDERING
+************************************************/
+
+function renderQuestion(){
+
+const q=quizQuestions[currentQuestion];
+
+document.getElementById("counter")
+.innerText=
+`Question ${currentQuestion+1} / ${quizQuestions.length}`;
+
+document.getElementById("questionText")
+.innerText=q.question;
+
+const container=
+document.getElementById("optionsContainer");
+
+container.innerHTML="";
+
+q.options.forEach(option=>{
+
+const div=document.createElement("div");
+
+div.className="option";
+
+if(
+userAnswers[currentQuestion]===option
+){
+div.classList.add("selected");
+}
+
+div.innerText=option;
+
+div.onclick=()=>{
+
+userAnswers[currentQuestion]=option;
+
+renderQuestion();
+
+updatePalette();
+
+};
+
+container.appendChild(div);
+
+});
+
+document.getElementById("progressBar")
+.style.width=
+((currentQuestion+1)/quizQuestions.length)*100+"%";
+
+updatePalette();
+
+}
+
+/************************************************
+ NAVIGATION
+************************************************/
+
+function nextQuestion(){
+
+if(currentQuestion<quizQuestions.length-1){
+
+currentQuestion++;
+
+renderQuestion();
+
+}
+
+}
+
+function prevQuestion(){
+
+if(currentQuestion>0){
+
+currentQuestion--;
+
+renderQuestion();
+
+}
+
+}
+
+/************************************************
+ PALETTE
+************************************************/
+
+function buildPalette(){
+
+const palette=
+document.getElementById("questionPalette");
+
+palette.innerHTML="";
+
+for(let i=0;i<QUIZ_SIZE;i++){
+
+const btn=document.createElement("button");
+
+btn.className="palette-btn";
+
+btn.innerText=i+1;
+
+btn.onclick=()=>{
+
+currentQuestion=i;
+
+renderQuestion();
+
+};
+
+palette.appendChild(btn);
+
+}
+
+}
+
+function updatePalette(){
+
+const buttons=
+document.querySelectorAll(".palette-btn");
+
+buttons.forEach((btn,index)=>{
+
+btn.classList.remove("answered");
+btn.classList.remove("current");
+
+if(userAnswers[index]){
+btn.classList.add("answered");
+}
+
+if(index===currentQuestion){
+btn.classList.add("current");
+}
+
+});
+
+}
+
+/************************************************
+ SUBMIT
+************************************************/
+
+function submitQuiz(){
+
+clearInterval(timerInterval);
+
+let score=0;
+
+quizQuestions.forEach((q,index)=>{
+
+if(userAnswers[index]===q.answer){
+score++;
+}
+
+});
+
+const percent=
+((score/quizQuestions.length)*100)
+.toFixed(1);
+
+let grade="F";
+
+if(percent>=90) grade="A";
+else if(percent>=80) grade="B";
+else if(percent>=70) grade="C";
+else if(percent>=60) grade="D";
+
+document.getElementById("quizScreen")
+.classList.add("hidden");
+
+document.getElementById("resultScreen")
+.classList.remove("hidden");
+
+document.getElementById("scoreText")
+.innerText=
+`${score} / ${quizQuestions.length}`;
+
+document.getElementById("percentageText")
+.innerText=
+`${percent}%`;
+
+document.getElementById("gradeText")
+.innerText=
+`Grade: ${grade}`;
+
+document.getElementById("correctWrongText")
+.innerText=
+`Correct: ${score} | Wrong: ${quizQuestions.length-score}`;
+
+const best=
+Math.max(
+score,
+parseInt(localStorage.getItem("bestFrenchScore")||0)
+);
+
+localStorage.setItem(
+"bestFrenchScore",
+best
+);
+
+document.getElementById("bestScoreText")
+.innerText=
+`Best Score: ${best}`;
+
+}
+
+/************************************************
+ REVIEW
+************************************************/
+
+function showReview(){
+
+document.getElementById("resultScreen")
+.classList.add("hidden");
+
+document.getElementById("reviewScreen")
+.classList.remove("hidden");
+
+const container=
+document.getElementById("reviewContainer");
+
+container.innerHTML="";
+
+quizQuestions.forEach((q,index)=>{
+
+const div=document.createElement("div");
+
+div.className="review-item";
+
+const correct=
+userAnswers[index]===q.answer;
+
+div.innerHTML=`
+<h4>${index+1}. ${q.question}</h4>
+<p>Your Answer:
+<span class="${correct?'correct':'incorrect'}">
+${userAnswers[index]||'Not Answered'}
+</span></p>
+<p>Correct Answer:
+<span class="correct">${q.answer}</span></p>
+`;
+
+container.appendChild(div);
+
+});
+
+}
+
+/************************************************
+ RESTART
+************************************************/
+
+function restartQuiz(){
+
+location.reload();
+
+}
+
+/************************************************
+ DARK MODE
+************************************************/
+
+function toggleDarkMode(){
+
+document.body.classList.toggle("dark");
+
+}
+
+</script>
+
+</body>
+</html>
